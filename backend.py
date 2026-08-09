@@ -11,8 +11,8 @@ from typing import TypedDict, Annotated
 import operator
 import uuid
 
-import psycopg
 from psycopg.rows import dict_row
+from psycopg_pool import ConnectionPool
 
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.postgres import PostgresSaver
@@ -209,13 +209,15 @@ graph.add_edge("final_agent", END)
 # =========================
 DATABASE_URL = get_database_url()
 
-_conn = psycopg.connect(
-    DATABASE_URL,
-    autocommit=True,
-    row_factory=dict_row
+_pool = ConnectionPool(
+    conninfo=DATABASE_URL,
+    min_size=1,
+    max_size=5,
+    max_idle=300,
+    kwargs={"autocommit": True, "row_factory": dict_row},
 )
 
-checkpointer = PostgresSaver(_conn)
+checkpointer = PostgresSaver(_pool)
 checkpointer.setup()
 
 travel_graph = graph.compile(checkpointer=checkpointer)
