@@ -171,7 +171,7 @@ Format the final answer beautifully using these sections:
 
 Important:
 - Be clear and practical.
-- Mention that live flight API may not provide ticket prices if pricing is unavailable.
+- Mention that live flight API may not be able to provide ticket prices if pricing is unavailable.
 - Keep the response useful for real travel planning.
 """
 
