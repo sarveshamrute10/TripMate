@@ -70,6 +70,10 @@ client = MultiServerMCPClient(
             "transport": "stdio",
             "command": "uvx",
             "args": [
+                # aviationstack-mcp still imports
+                # mcp.server.fastmcp, which was removed
+                # in mcp 2.0. Pin it to the 1.x line.
+                "--with", "mcp<2",
                 "aviationstack-mcp"
             ],
             "env": AVIATION_ENV
