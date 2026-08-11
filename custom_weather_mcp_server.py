@@ -59,6 +59,15 @@ def get_forecast(city: str):
 
     data = response.json()
 
+    if "list" not in data:
+        return {
+            "city": city,
+            "error": data.get(
+                "message",
+                "Forecast unavailable."
+            )
+        }
+
     forecast = []
 
     # Return first 5 forecast entries
