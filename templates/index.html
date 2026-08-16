@@ -7,47 +7,60 @@
 
     <title>TripMate AI</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fragment+Mono:ital@0;1&family=Inter:wght@400;500&display=swap"
+        rel="stylesheet"
+    >
+
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
 
-    <div class="page-bg">
-        <div class="gradient-circle circle-1"></div>
-        <div class="gradient-circle circle-2"></div>
-        <div class="gradient-circle circle-3"></div>
-    </div>
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a class="wordmark" href="/">
+                TripMate
+            </a>
+
+            <div class="topbar-meta">
+                <span class="mono-label">LangGraph &middot; MCP</span>
+
+                <span class="status-pill">
+                    <span class="status-dot"></span>
+                    Online
+                </span>
+            </div>
+        </div>
+    </header>
 
     <main class="app-container">
 
         <section class="hero-section">
-            <div class="badge">
-                ✈️ TripMate AI — A Multi-Agent Travel Planner with LangGraph & MCP
-            </div>
+            <p class="mono-label eyebrow">Multi-agent travel planning</p>
 
             <h1>
-                Plan Your Perfect Trip with AI
+                Plan your perfect trip,<br>
+                one agent at a time.
             </h1>
 
-            <p>
-                Search flights, discover hotels, and generate a complete travel itinerary using a multi-agent LangGraph system.
+            <p class="hero-sub">
+                A supervisor routes your request across flight, hotel and
+                weather specialists, then hands you a draft itinerary to
+                approve before anything is finalized.
             </p>
         </section>
 
         <section class="planner-card">
 
             <div class="card-header">
-                <div>
-                    <h2>Where do you want to go?</h2>
-                    <p>
-                        Example: Plan a complete 7 days Japan trip from Mumbai under 2 lakhs.
-                    </p>
-                </div>
-
-                <div class="status-pill">
-                    <span class="status-dot"></span>
-                    Online
-                </div>
+                <h2>Where do you want to go?</h2>
+                <p>
+                    Example: Plan a complete 7 days Japan trip from Mumbai
+                    under 2 lakhs.
+                </p>
             </div>
 
             <div class="input-area">
@@ -57,26 +70,28 @@
                 ></textarea>
 
                 <button id="sendBtn" onclick="sendMessage()">
-                    <span id="btnText">Generate Plan</span>
+                    <span id="btnText">Generate plan</span>
                     <span id="btnLoader" class="loader hidden"></span>
                 </button>
             </div>
 
             <div class="quick-prompts">
+                <span class="mono-label">Try</span>
+
                 <button onclick="setPrompt('Plan a complete 7 days Japan trip from Mumbai including flights, hotels and sightseeing under 2 lakhs.')">
-                    Japan Trip
+                    Japan
                 </button>
 
                 <button onclick="setPrompt('Plan a 5 days Dubai trip from Mumbai with flights, hotels and sightseeing.')">
-                    Dubai Trip
+                    Dubai
                 </button>
 
                 <button onclick="setPrompt('Plan a 7 days Thailand trip from Mumbai with budget hotels and sightseeing.')">
-                    Thailand Trip
+                    Thailand
                 </button>
 
                 <button onclick="setPrompt('Give me all country flight info.')">
-                    Global Flights
+                    Global flights
                 </button>
             </div>
 
@@ -86,15 +101,16 @@
 
             <div class="result-header">
                 <div>
-                    <h2>Review Your Draft Itinerary</h2>
-                    <p id="approvalHint">
+                    <p class="mono-label eyebrow">Step 01 &mdash; Your review</p>
+                    <h2>Review your draft itinerary</h2>
+                    <p id="approvalHint" class="section-sub">
                         Approve this draft to generate the final plan,
                         or tell us what to change.
                     </p>
                 </div>
             </div>
 
-            <div id="draftBox" class="result-box"></div>
+            <div id="draftBox" class="result-box draft-box"></div>
 
             <div class="approval-controls">
                 <textarea
@@ -110,7 +126,7 @@
                         class="approve-btn"
                         onclick="submitApproval('approve')"
                     >
-                        Approve &amp; Generate Final Plan
+                        Approve &amp; generate final plan
                     </button>
 
                     <button
@@ -118,7 +134,7 @@
                         class="revise-btn"
                         onclick="submitApproval('revise')"
                     >
-                        Request Changes
+                        Request changes
                     </button>
                 </div>
             </div>
@@ -129,8 +145,9 @@
 
             <div class="result-header">
                 <div>
-                    <h2>Your AI Travel Plan</h2>
-                    <p id="threadInfo">Thread ID: -</p>
+                    <p class="mono-label eyebrow">Step 02 &mdash; Final plan</p>
+                    <h2>Your travel plan</h2>
+                    <p id="threadInfo" class="section-sub mono-label">Thread ID: -</p>
                 </div>
 
                 <div class="result-actions">
@@ -145,7 +162,7 @@
             </div>
 
             <div id="pdfContent" class="pdf-content">
-                <h1 class="pdf-title">AI Travel Plan</h1>
+                <h1 class="pdf-title">Travel Plan</h1>
                 <div id="resultBox" class="result-box"></div>
             </div>
 
@@ -156,7 +173,9 @@
     </main>
 
     <footer>
-        Built with FastAPI, LangGraph, Groq, PostgreSQL, Tavily and AviationStack
+        <span class="mono-label">
+            FastAPI &middot; LangGraph &middot; Groq &middot; PostgreSQL &middot; Tavily &middot; AviationStack
+        </span>
     </footer>
 
     <!-- Markdown Renderer -->
