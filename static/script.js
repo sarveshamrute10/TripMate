@@ -1,4 +1,7 @@
-let currentThreadId = localStorage.getItem("travel_thread_id") || null;
+// Set per plan by the server. Only used to resume a plan
+// that is paused at the approval gate — a new request
+// always starts a new thread.
+let currentThreadId = null;
 let latestAnswerMarkdown = "";
 
 function setPrompt(text) {
@@ -35,27 +38,81 @@ function hideError() {
     errorBox.textContent = "";
 }
 
+function renderMarkdown(element, text) {
+    if (typeof marked !== "undefined") {
+        element.innerHTML = marked.parse(text);
+    } else {
+        element.innerText = text;
+    }
+}
+
+function scrollTo(section) {
+    section.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+function hideApproval() {
+    document.getElementById("approvalSection").classList.add("hidden");
+}
+
 function showResult(answer, threadId) {
     latestAnswerMarkdown = answer;
+
+    hideApproval();
 
     const resultSection = document.getElementById("resultSection");
     const resultBox = document.getElementById("resultBox");
     const threadInfo = document.getElementById("threadInfo");
 
-    if (typeof marked !== "undefined") {
-        resultBox.innerHTML = marked.parse(answer);
-    } else {
-        resultBox.innerText = answer;
-    }
+    renderMarkdown(resultBox, answer);
 
     threadInfo.textContent = `Thread ID: ${threadId}`;
 
     resultSection.classList.remove("hidden");
 
-    resultSection.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
+    scrollTo(resultSection);
+}
+
+function showApproval(draft, revisionCount) {
+    const approvalSection = document.getElementById("approvalSection");
+    const draftBox = document.getElementById("draftBox");
+    const hint = document.getElementById("approvalHint");
+    const feedbackInput = document.getElementById("feedbackInput");
+
+    renderMarkdown(draftBox, draft);
+
+    feedbackInput.value = "";
+
+    hint.textContent = revisionCount > 0
+        ? `Revision ${revisionCount}. Approve this draft, or ask for more changes.`
+        : "Approve this draft to generate the final plan, or tell us what to change.";
+
+    // The final plan from a previous run is no longer current.
+    document.getElementById("resultSection").classList.add("hidden");
+
+    approvalSection.classList.remove("hidden");
+
+    scrollTo(approvalSection);
+}
+
+// Both endpoints return the same shape.
+function handlePlanResponse(data) {
+    currentThreadId = data.thread_id;
+
+    if (data.status === "awaiting_approval") {
+        showApproval(data.draft_itinerary, data.revision_count || 0);
+        return;
+    }
+
+    if (data.status === "rejected") {
+        hideApproval();
+        showError(data.rejection_reason || data.answer || "Request rejected.");
+        return;
+    }
+
+    showResult(data.answer, data.thread_id);
 }
 
 async function sendMessage() {
@@ -89,14 +146,63 @@ async function sendMessage() {
             throw new Error(data.error || "Something went wrong.");
         }
 
-        currentThreadId = data.thread_id;
-        localStorage.setItem("travel_thread_id", currentThreadId);
-
-        showResult(data.answer, data.thread_id);
+        handlePlanResponse(data);
 
     } catch (error) {
         showError(error.message);
     } finally {
+        setLoading(false);
+    }
+}
+
+function setApprovalLoading(isLoading) {
+    document.getElementById("approveBtn").disabled = isLoading;
+    document.getElementById("reviseBtn").disabled = isLoading;
+}
+
+async function submitApproval(action) {
+    hideError();
+
+    const feedback = document.getElementById("feedbackInput").value.trim();
+
+    if (action === "revise" && !feedback) {
+        showError("Tell us what you'd like changed first.");
+        return;
+    }
+
+    if (!currentThreadId) {
+        showError("This plan has expired. Please generate a new one.");
+        return;
+    }
+
+    setApprovalLoading(true);
+    setLoading(true);
+
+    try {
+        const response = await fetch("/api/travel/approve", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                thread_id: currentThreadId,
+                action: action,
+                feedback: feedback
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "Something went wrong.");
+        }
+
+        handlePlanResponse(data);
+
+    } catch (error) {
+        showError(error.message);
+    } finally {
+        setApprovalLoading(false);
         setLoading(false);
     }
 }
