@@ -481,4 +481,84 @@ footer {
     .pdf-content {
         padding: 20px;
     }
+
+    .approval-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .approve-btn,
+    .revise-btn {
+        width: 100%;
+    }
+}
+
+
+/* =========================
+   Human-in-the-loop approval
+   ========================= */
+
+.approval-section {
+    border-color: rgba(250, 204, 21, 0.35);
+}
+
+.approval-section .result-box {
+    max-height: 460px;
+    overflow-y: auto;
+}
+
+.approval-controls {
+    margin-top: 20px;
+}
+
+.feedback-input {
+    min-height: 90px;
+    border-radius: 16px;
+    padding: 16px;
+    font-size: 0.95rem;
+}
+
+.approval-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+}
+
+.approve-btn,
+.revise-btn {
+    border: none;
+    border-radius: 14px;
+    padding: 13px 22px;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 0.95rem;
+    transition: 0.25s ease;
+}
+
+.approve-btn {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    color: #ffffff;
+    box-shadow: 0 12px 30px rgba(34, 197, 94, 0.25);
+}
+
+.approve-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 36px rgba(34, 197, 94, 0.35);
+}
+
+.revise-btn {
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    background: rgba(15, 23, 42, 0.9);
+    color: #ffffff;
+}
+
+.revise-btn:hover:not(:disabled) {
+    background: rgba(59, 130, 246, 0.22);
+}
+
+.approve-btn:disabled,
+.revise-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
 }

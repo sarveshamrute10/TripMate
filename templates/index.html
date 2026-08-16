@@ -82,6 +82,49 @@
 
         </section>
 
+        <section id="approvalSection" class="result-section approval-section hidden">
+
+            <div class="result-header">
+                <div>
+                    <h2>Review Your Draft Itinerary</h2>
+                    <p id="approvalHint">
+                        Approve this draft to generate the final plan,
+                        or tell us what to change.
+                    </p>
+                </div>
+            </div>
+
+            <div id="draftBox" class="result-box"></div>
+
+            <div class="approval-controls">
+                <textarea
+                    id="feedbackInput"
+                    class="feedback-input"
+                    rows="3"
+                    placeholder="What should change? e.g. make it cheaper, add more temples, slower pace..."
+                ></textarea>
+
+                <div class="approval-actions">
+                    <button
+                        id="approveBtn"
+                        class="approve-btn"
+                        onclick="submitApproval('approve')"
+                    >
+                        Approve &amp; Generate Final Plan
+                    </button>
+
+                    <button
+                        id="reviseBtn"
+                        class="revise-btn"
+                        onclick="submitApproval('revise')"
+                    >
+                        Request Changes
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
         <section id="resultSection" class="result-section hidden">
 
             <div class="result-header">
